@@ -8,11 +8,21 @@ def callback(ch, method, properties, body):
     print(f" [x] Received: {body.decode()}")
     ch.basic_ack(delivery_tag=method.delivery_tag)  # Acknowledge message
 
-# Connect to RabbitMQ
-credentials = pika.PlainCredentials('myuser', 'mypassword')
-parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials)
-connection = pika.BlockingConnection(parameters)
-channel = connection.channel()
+def connect_to_rabbitmq():
+    #Attempts to connect to RabbitMQ, retrying until successful.
+    credentials = pika.PlainCredentials('myuser', 'mypassword')
+    parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials)
+    while True:
+        try:
+            connection = pika.BlockingConnection(parameters)
+            channel = connection.channel()
+            print("Connected to RabbitMQ")
+            return connection, channel
+        except (pika.exceptions.AMQPConnectionError, pika.exceptions.ChannelClosedByBroker):
+            print("RabbitMQ not available, retrying in 5 seconds...")
+            time.sleep(5)
+
+connect_to_rabbitmq()
 
 # Declare queue (durable so it survives restarts)
 channel.queue_declare(queue=UNIQUE_ID, durable=True)
