@@ -23,7 +23,7 @@ def connect_to_rabbitmq():
             print("RabbitMQ not available, retrying in 5 seconds...")
             time.sleep(5)
 
-connect_to_rabbitmq()
+connection, channel = connect_to_rabbitmq()
 
 # Declare queue (durable so it survives restarts)
 channel.queue_declare(queue=UNIQUE_ID, durable=True)
