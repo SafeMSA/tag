@@ -4,9 +4,11 @@ import time
 
 UNIQUE_ID = 'subscriber_queue_{socket.gethostname()}'
 RABBITMQ_HOST = 'rabbitmq1'
+MESSAGES_RECEIVED = 0
 
 def callback(ch, method, properties, body):
-    print(f" [x] Received: {body.decode()}")
+    MESSAGES_RECEIVED += 1
+    print(f" Received: {body.decode()}, TOTAL:  {MESSAGES_RECEIVED}")
     ch.basic_ack(delivery_tag=method.delivery_tag)  # Acknowledge message
 
 def connect_to_rabbitmq():
