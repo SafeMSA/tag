@@ -1,5 +1,6 @@
 import pika
 import socket
+import time
 
 UNIQUE_ID = 'subscriber_queue_{socket.gethostname()}'
 RABBITMQ_HOST = 'rabbitmq1'
