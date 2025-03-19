@@ -6,7 +6,7 @@ UNIQUE_ID = 'subscriber_queue_{socket.gethostname()}'
 RABBITMQ_HOST = 'rabbitmq1'
 
 def callback(ch, method, properties, body):
-    print(f" Received: {body.decode()}")
+    print(f" Received: {body.decode().json()}")
     ch.basic_ack(delivery_tag=method.delivery_tag)  # Acknowledge message
 
 def connect_to_rabbitmq():
