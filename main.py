@@ -16,6 +16,7 @@ def connect_to_rabbitmq():
     while True:
         for host in RABBITMQ_HOST:
             try:
+                print("Trying to connect to " + str(host))
                 parameters = pika.ConnectionParameters(host=host, credentials=credentials, blocked_connection_timeout=1)
                 connection = pika.BlockingConnection(parameters)
                 channel = connection.channel()
@@ -23,7 +24,7 @@ def connect_to_rabbitmq():
                 channel.queue_declare(queue=UNIQUE_ID, durable=True)
                 # Bind queue to the exchange
                 channel.queue_bind(exchange='notifications', queue=UNIQUE_ID)
-                print("Connected to RabbitMQ")
+                print("Connected to " + str(host))
                 return connection, channel
             except (pika.exceptions.AMQPConnectionError, pika.exceptions.ChannelClosedByBroker):
                 print("RabbitMQ not available, retrying in 1 seconds...")
@@ -38,5 +39,7 @@ while True:
 
         print(" [*] Waiting for messages. To exit press CTRL+C")
         channel.start_consuming()
+
     except Exception as e:
+        channel.stop_consuming()
         print(e)
