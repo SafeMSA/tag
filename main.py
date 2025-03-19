@@ -38,5 +38,5 @@ while True:
 
         print(" [*] Waiting for messages. To exit press CTRL+C")
         channel.start_consuming()
-    except:
-        print("Rabbitmq connection lost, retrying..")
+    except Exception as e:
+        print(e)
