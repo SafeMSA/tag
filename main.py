@@ -17,6 +17,10 @@ def connect_to_rabbitmq():
         try:
             connection = pika.BlockingConnection(parameters)
             channel = connection.channel()
+            # Declare queue (durable so it survives restarts)
+            channel.queue_declare(queue=UNIQUE_ID, durable=True)
+            # Bind queue to the exchange
+            channel.queue_bind(exchange='notifications', queue=UNIQUE_ID)
             print("Connected to RabbitMQ")
             return connection, channel
         except (pika.exceptions.AMQPConnectionError, pika.exceptions.ChannelClosedByBroker):
@@ -25,11 +29,6 @@ def connect_to_rabbitmq():
 
 connection, channel = connect_to_rabbitmq()
 
-# Declare queue (durable so it survives restarts)
-channel.queue_declare(queue=UNIQUE_ID, durable=True)
-
-# Bind queue to the exchange
-channel.queue_bind(exchange='notifications', queue=UNIQUE_ID)
 
 # Consume messages
 channel.basic_consume(queue=UNIQUE_ID, on_message_callback=callback)
