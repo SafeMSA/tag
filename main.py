@@ -16,7 +16,7 @@ def connect_to_rabbitmq():
     while True:
         for host in RABBITMQ_HOST:
             try:
-                parameters = pika.ConnectionParameters(host=host, credentials=credentials)
+                parameters = pika.ConnectionParameters(host=host, credentials=credentials, blocked_connection_timeout=1)
                 connection = pika.BlockingConnection(parameters)
                 channel = connection.channel()
                 # Declare queue (durable so it survives restarts)
