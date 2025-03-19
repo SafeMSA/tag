@@ -29,11 +29,12 @@ def connect_to_rabbitmq():
             except (pika.exceptions.AMQPConnectionError, pika.exceptions.ChannelClosedByBroker):
                 print(str(host) + " not available, retrying in 5 seconds...")
                 time.sleep(5)
+                print("5 seconds later...")
 
 while True:
     try:
         connection, channel = connect_to_rabbitmq()
-
+        print("Im consuming again")
         # Consume messages
         channel.basic_consume(queue=UNIQUE_ID, on_message_callback=callback)
 
