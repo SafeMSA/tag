@@ -3,7 +3,8 @@ import socket
 import time
 
 UNIQUE_ID = "subscriber_queue_" + str(socket.gethostname())
-RABBITMQ_HOST = ['rabbitmq1', 'rabbitmq2', 'rabbitmq3']
+RABBITMQ_HOST = 'localhost'  # Connect via Envoy sidecar
+RABBITMQ_PORT = 9093           # Envoy upstream port
 
 def callback(ch, method, properties, body):
     print(f" Received: {body.decode()}")
@@ -14,27 +15,29 @@ def connect_to_rabbitmq():
     credentials = pika.PlainCredentials('myuser', 'mypassword')
 
     while True:
-        for host in RABBITMQ_HOST:
-            try:
-                print("Trying to connect to " + str(host))
-                parameters = pika.ConnectionParameters(host=host, credentials=credentials, blocked_connection_timeout=1)
-                connection = pika.BlockingConnection(parameters)
-                channel = connection.channel()
-                # Declare queue (durable so it survives restarts)
-                channel.queue_declare(queue=UNIQUE_ID, durable=True)
-                # Bind queue to the exchange
-                channel.queue_bind(exchange='notifications', queue=UNIQUE_ID)
-                print("Connected to " + str(host))
-                return connection, channel
-            except (pika.exceptions.AMQPConnectionError, pika.exceptions.ChannelClosedByBroker):
-                print(str(host) + " not available, retrying in 5 seconds...")
-                time.sleep(5)
-                print("5 seconds later...")
+        try:
+            parameters = pika.ConnectionParameters(
+                host=RABBITMQ_HOST, 
+                port=RABBITMQ_PORT,
+                credentials=credentials, 
+                blocked_connection_timeout=1
+            )
+            connection = pika.BlockingConnection(parameters)
+            channel = connection.channel()
+            # Declare queue (durable so it survives restarts)
+            channel.queue_declare(queue=UNIQUE_ID, durable=True)
+            # Bind queue to the exchange
+            channel.queue_bind(exchange='notifications', queue=UNIQUE_ID)
+            print("Connected to " + str(host))
+            return connection, channel
+        
+        except (pika.exceptions.AMQPConnectionError, pika.exceptions.ChannelClosedByBroker):
+            print(str(host) + " not available, retrying in 5 seconds...")
+            time.sleep(5)
 
 while True:
     try:
         connection, channel = connect_to_rabbitmq()
-        print("Im consuming again")
         # Consume messages
         channel.basic_consume(queue=UNIQUE_ID, on_message_callback=callback)
 
