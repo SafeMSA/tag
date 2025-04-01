@@ -61,12 +61,9 @@ def callback(ch, method, properties, body):
     timestamp = message.get("time_sent")
 
     # Calculate the time difference between when the message was sent and when it was received
-    if timestamp:
-        message_time = datetime.fromisoformat(timestamp)  # Convert the timestamp to a datetime object
-        current_time = datetime.now()  # Get the current time
-        time_diff = (current_time - message_time).total_seconds()  # Time difference in seconds
-    else:
-        time_diff = None
+    message_time = datetime.fromisoformat(timestamp)  # Convert the timestamp to a datetime object
+    current_time = datetime.now()  # Get the current time
+    time_diff = (current_time - message_time).total_seconds()  # Time difference in secondsW
     
     # Prepare the response as a JSON object
     response = {
