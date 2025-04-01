@@ -42,6 +42,7 @@ def connect_to_rabbitmq():
 # Send response to another queue
 def send_response(channel, message):
     channel.basic_publish(
+        exchange='',  # No exchange, direct to queue
         routing_key=RESPONSE_QUEUE,  # Directly to the response queue
         body=message,
         properties=pika.BasicProperties(
