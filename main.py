@@ -3,6 +3,7 @@ import socket
 import time
 import json
 import os
+import threading
 from datetime import datetime
 
 # Constants
@@ -55,6 +56,10 @@ def send_response(channel, message):
 
 # Callback to handle incoming messages
 def callback(ch, method, properties, body):
+    # Create a new thread to handle the message in parallel
+    threading.Thread(target=handle_message, args=(ch, method, body)).start()
+
+def handle_message(ch, method, body):
     time.sleep(DELAY)
 
     message = json.loads(body.decode())  # Parse incoming JSON message
