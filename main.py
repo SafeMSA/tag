@@ -2,6 +2,7 @@ import pika
 import socket
 import time
 import json
+import os
 from datetime import datetime
 
 # Constants
@@ -11,6 +12,7 @@ RABBITMQ_PORT = 9093
 RESPONSE_QUEUE = 'response_queue'  # Name of the queue to send the response to
 USER = 'myuser'
 PASSWORD = 'mypassword'
+DELAY = int(os.environ.get('DELAY_TIME'))
 
 # Connect to RabbitMQ and declare the necessary queues
 def connect_to_rabbitmq():
@@ -53,6 +55,8 @@ def send_response(channel, message):
 
 # Callback to handle incoming messages
 def callback(ch, method, properties, body):
+    time.sleep(DELAY)
+
     message = json.loads(body.decode())  # Parse incoming JSON message
     print(f"Received: {message}")
     
