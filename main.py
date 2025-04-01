@@ -87,7 +87,7 @@ def main():
             connection, channel = connect_to_rabbitmq()
 
             # Start consuming messages from the subscriber queue
-            channel.basic_consume(queue=UNIQUE_ID, on_message_callback=callback)
+            channel.basic_consume(queue=SUBSCRIBER_QUEUE, on_message_callback=callback)
 
             print("Waiting for messages. To exit press CTRL+C.")
             channel.start_consuming()
