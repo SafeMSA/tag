@@ -71,6 +71,7 @@ def callback(ch, method, properties, body):
         "id": message_id,
         "tag": socket.gethostname(),
         "time_diff": time_diff,
+        "time_sent": message_time
     }
 
     # Send the response
