@@ -60,6 +60,7 @@ def send_response(channel, message):
 # Callback to handle incoming messages
 def callback(ch, method, properties, body):
     if not consume_messages:  # If consuming is paused, don't process the message
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
         return
 
     message = json.loads(body.decode())  # Parse incoming JSON message
