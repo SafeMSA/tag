@@ -188,7 +188,7 @@ def connectivity_callback(connectivity):
         consume_messages = True  # Start consuming messages
 
 def main():
-    with ThreadPoolExecutor(max_workers=1) as executor:
+    with ThreadPoolExecutor(max_workers=2) as executor:
         tag = TagSimulator(socket.gethostname(), connectivity_callback)
         executor.submit(tag.simulate)
         while True:
