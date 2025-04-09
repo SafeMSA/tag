@@ -5,6 +5,7 @@ import json
 import os
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
+import random
 
 # Constants
 SUBSCRIBER_QUEUE = f"subscriber_queue_{socket.gethostname()}"
