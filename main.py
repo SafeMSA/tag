@@ -190,7 +190,7 @@ def connectivity_callback(connectivity):
 def main():
     with ThreadPoolExecutor(max_workers=2) as executor:
         tag = TagSimulator(socket.gethostname(), connectivity_callback)
-        executor.submit(tag.simulate)
+        tag.simulate()
         while True:
             try:
                 # Connect to RabbitMQ
