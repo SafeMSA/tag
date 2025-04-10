@@ -37,6 +37,7 @@ def connect_to_rabbitmq():
             channel.queue_declare(queue=SUBSCRIBER_QUEUE, durable=True)
             # Declare the response queue
             channel.queue_declare(queue=RESPONSE_QUEUE, durable=True)
+            channel.exchange_declare(exchange='notifications', exchange_type='fanout', durable=True)
             # Bind subscriber queue to exchange
             channel.queue_bind(exchange='notifications', queue=SUBSCRIBER_QUEUE)
 
